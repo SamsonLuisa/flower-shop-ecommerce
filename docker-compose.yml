@@ -1,0 +1,27 @@
+version: '3.8'     #versiunea sintaxei doker compose
+#un server=un container doker, aici sunt 3 containere(servere)
+services:
+  php-env:   #numele serverului care va contine apache, php, numele aplicatiei (adica serverul web)
+    build: .      #Caută Dockerfile în folderul în care se află docker-compose.yml
+    volumes:
+      - ./src:/var/www/html #ii spune unde sa caute fisierul doker
+    ports:
+      - 8080:80            #portul serverului apache(8080) care face legatura cu portul containerului(80) -- containerul asculta de port
+    depends_on:
+      - mysql_db  #aici spunem ca intai trebuie sa avem o baza de date facuta
+
+  mysql_db: #aici este containerul bazei de date
+    image: mysql:5.7 #aici este serverul MySQL oficial.
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: florarie
+
+  phpmyadmin:      #aici este interfata pentru baza de date
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - 8081:80
+    environment:
+      PMA_ARBITRARY: 1
